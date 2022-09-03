@@ -245,15 +245,7 @@ RANSAC<T, SType>::Compute(std::vector<SType> & parameters, double desiredProbabi
   // cleanup
   typename std::set<int *, SubSetIndexComparator>::iterator it = this->chosenSubSets->begin();
   typename std::set<int *, SubSetIndexComparator>::iterator chosenSubSetsEnd = this->chosenSubSets->end();
-  while (it != chosenSubSetsEnd)
-  {
-    delete[](*it);
-    it++;
-  }
   this->chosenSubSets->clear();
-  delete this->chosenSubSets;
-  delete[] this->bestVotes;
-
   return (double)this->numVotesForBest / (double)numAgreeObjects;
 }
 
@@ -323,9 +315,9 @@ RANSAC<T, SType>::RANSACThreadCallback(void * arg)
           l++;
         }
       }
-
       caller->hypothesisMutex.lock();
       // check that the sub-set just chosen is unique
+
       std::pair<typename std::set<int *, SubSetIndexComparator>::iterator, bool> res =
          caller->chosenSubSets->insert(curSubSetIndexes);
       caller->hypothesisMutex.unlock();
