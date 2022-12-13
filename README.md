@@ -6,12 +6,15 @@ ITKRANSAC
 
 Overview
 --------
+
 This is the source code for a C++ templated implementation of the RANSAC
-algorithm. The implementation is multi-threaded. This repository is only for 
-pointset registratation and differs slightly from the original generic implementation due to optimization. 
+algorithm and associated Python wrapping. The implementation is
+multi-threaded. This repository is only for pointset registratation and
+differs slightly from the original generic implementation due to optimization.
 
 For implementation related to plane and sphere estimation
-please refer https://github.com/midas-journal/midas-journal-769.
+please refer https://github.com/midas-journal/midas-journal-769 and the
+[associated Insight Journal article](https://doi.org/10.54294/ia6mzx).
 
 The code is "in the style of ITK". That is, it is very similar to the official
 ITK style but does not follow all of the required conventions.
@@ -24,6 +27,12 @@ that can be used with the RANSAC algorithm. This is an abstract class that
 defines an interface.
 3. [itkLandmarkRegistrationEstimator.{h,hxx}](./include/itkLandmarkRegistrationEstimator.hxx) - Estimation code for landmark based pointset registration.
 4. [Testing/*.cxx](./test/itkRansacTest_LandmarkRegistration) - Test for the PointSet registration using landmark points.
+
+Python wrapping installation:
+
+```
+pip install itk-ransac
+```
 
 <br/><br/>
 **Sample Usage in Python for 3D PointSet is shown here:**
@@ -50,13 +59,14 @@ ransacEstimator.SetAgreeData(agreeData)
 ransacEstimator.SetMaxIteration(number_of_iterations)
 ransacEstimator.SetNumberOfThreads(8)
 ransacEstimator.SetParametersEstimator(registrationEstimator)
-    
+
 percentageOfDataUsed = ransacEstimator.Compute( transformParameters, desiredProbabilityForNoOutliers )
 for i in transformParameters:
   print(i)
 ```
 
 <br/><br/>
+
 **Landmarks can be obtained by performing feature matching.**
 
 For this one can use the [ITKFPFH](https://github.com/InsightSoftwareConsortium/ITKFPFH) library.
