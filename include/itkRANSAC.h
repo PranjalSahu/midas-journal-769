@@ -203,6 +203,7 @@ private:
   // agrees with the best model, otherwise false
   bool *       bestVotes;
   unsigned int numVotesForBest;
+  double       bestRMSE;
 
   std::vector<T> data;
   std::vector<T> agreeData;
