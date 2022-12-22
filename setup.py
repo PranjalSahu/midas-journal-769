@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='itk-ransac',
-    version='0.1.2',
+    version='0.1.3',
     author='Pranjal Sahu',
     author_email='pranjalsahu5@gmail.com',
     packages=['itk'],
