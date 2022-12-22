@@ -76,8 +76,8 @@ public:
   CheckCorresspondenceDistance(std::vector<double> & parameters, std::vector<Point<double, Dimension> *> & data) override;
 
   virtual bool
-  CheckCorresspondenceEdgeLength(std::vector<double> & parameters, std::vector<Point<double, Dimension> *> & data) override;
-  
+  CheckCorresspondenceEdgeLength(std::vector<double> & parameters, std::vector<Point<double, Dimension> *> & data, double edgeLength) override;
+
   virtual void
   SetDelta(double delta);
 
