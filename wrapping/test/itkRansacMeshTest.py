@@ -87,7 +87,8 @@ GenerateData(data, agreeData)
 transformParameters = itk.vector.D()
 bestTransformParameters = itk.vector.D()
 
-RegistrationEstimatorType = itk.Ransac.LandmarkRegistrationEstimator[6]
+TransformType = itk.Similarity3DTransform.D
+RegistrationEstimatorType = itk.Ransac.LandmarkRegistrationEstimator[6, TransformType]
 registrationEstimator = RegistrationEstimatorType.New()
 registrationEstimator.SetMinimalForEstimate(number_of_ransac_points)
 registrationEstimator.SetAgreeData(agreeData)
@@ -95,13 +96,16 @@ registrationEstimator.SetDelta(maximumDistance)
 registrationEstimator.LeastSquaresEstimate(data, transformParameters)
 
 desiredProbabilityForNoOutliers = 0.99
-RANSACType = itk.RANSAC[itk.Point[itk.D, 6], itk.D]
+RANSACType = itk.RANSAC[itk.Point[itk.D, 6], itk.D, TransformType]
 ransacEstimator = RANSACType.New()
 ransacEstimator.SetData(data)
 ransacEstimator.SetAgreeData(agreeData)
+ransacEstimator.SetCheckCorresspondenceDistance(False)
+ransacEstimator.SetCheckCorrespondenceEdgeLength(0.9)
 ransacEstimator.SetMaxIteration(number_of_iterations)
-ransacEstimator.SetNumberOfThreads(16)
 ransacEstimator.SetParametersEstimator(registrationEstimator)
 
 percentageOfDataUsed = ransacEstimator.Compute(transformParameters, desiredProbabilityForNoOutliers )
-print('Percentage of data used is ', percentageOfDataUsed)
+print('Percentage of data used is ', percentageOfDataUsed[0])
+print('Inlier RMSE is ', percentageOfDataUsed[1])
+print('Transform Parameters are ', ", ".join([str(np.round(x, 3)) for x in list(transformParameters)]))

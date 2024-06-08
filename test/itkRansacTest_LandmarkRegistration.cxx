@@ -49,8 +49,9 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
+  using TTransform = itk::Similarity3DTransform<double>;
   const unsigned int DimensionPoint = 6;
-  typedef itk::RANSAC<itk::Point<double, DimensionPoint>, double> RANSACType;
+  typedef itk::RANSAC<itk::Point<double, DimensionPoint>, double, TTransform> RANSACType;
 
   std::vector<itk::Point<double, DimensionPoint>> data;
   std::vector<itk::Point<double, DimensionPoint>> agreeData;
@@ -60,9 +61,9 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
   
   // create and initialize the parameter estimator
   double inlierValue = 3;
-  int ransacPoints = 100;
-  int maxIteration = 100;
-  auto   registrationEstimator = itk::LandmarkRegistrationEstimator<6>::New();
+  int ransacPoints = 3;
+  int maxIteration = 10000;
+  auto   registrationEstimator = itk::LandmarkRegistrationEstimator<6, TTransform>::New();
   registrationEstimator->SetMinimalForEstimate(ransacPoints);
   registrationEstimator->SetDelta(inlierValue);
   registrationEstimator->SetAgreeData(agreeData);
@@ -76,14 +77,15 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
 
   // create and initialize the RANSAC algorithm
   double              desiredProbabilityForNoOutliers = 0.99;
-  double              percentageOfDataUsed;
   RANSACType::Pointer ransacEstimator = RANSACType::New();
   ransacEstimator->SetData(data);
   ransacEstimator->SetAgreeData(agreeData);
   ransacEstimator->SetParametersEstimator(registrationEstimator);
+  ransacEstimator->SetCheckCorresspondenceDistance(true);
+  ransacEstimator->SetCheckCorrespondenceEdgeLength(0.9);
   ransacEstimator->SetMaxIteration(maxIteration);
   
-  percentageOfDataUsed = ransacEstimator->Compute(transformParameters, desiredProbabilityForNoOutliers);
+  auto percentageOfDataUsed = ransacEstimator->Compute(transformParameters, desiredProbabilityForNoOutliers);
 
   if (transformParameters.empty())
   {
@@ -98,7 +100,9 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
     }
   }
 
-  std::cout << "percentageOfDataUsed " << percentageOfDataUsed << "\n\n";
+  std::cout << "\n\n" << std::endl;
+  std::cout << "percentageOfDataUsed " << percentageOfDataUsed[0] << "\n\n";
+  std::cout << "Inlier RMSE is  " << percentageOfDataUsed[1] << "\n\n";
   return EXIT_SUCCESS;
 }
 
