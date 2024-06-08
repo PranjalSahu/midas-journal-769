@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='itk-ransac',
-    version='0.1.1',
+    version='0.1.2',
     author='Pranjal Sahu',
     author_email='pranjalsahu5@gmail.com',
     packages=['itk'],
@@ -43,6 +43,6 @@ setup(
     keywords='ITK InsightToolkit',
     url=r'https://itk.org/',
     install_requires=[
-        r'itk>=5.3.0'
+        r'itk == 5.3.*'
     ]
     )
