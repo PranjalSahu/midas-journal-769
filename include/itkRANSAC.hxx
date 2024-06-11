@@ -149,7 +149,7 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
         outputPair.push_back(0);
         return outputPair;
       }
-    
+
 
   unsigned int numForEstimate = this->paramEstimator->GetMinimalForEstimate();
   size_t       numAgreeObjects = this->agreeData.size();
@@ -173,9 +173,8 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
   // STEP2: create the threads that generate hypotheses and test
   itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(this->numberOfThreads);
   itk::MultiThreaderBase::Pointer threader = itk::MultiThreaderBase::New();
-  threader->SetSingleMethod(RANSAC<T, SType, TTransform>::RANSACThreadCallback, this);
   // runs all threads and blocks till they finish
-  threader->SingleMethodExecute();
+  threader->SetSingleMethodAndExecute(RANSAC<T, SType, TTransform>::RANSACThreadCallback, this);
 
   auto transform = TTransform::New();
 
@@ -218,13 +217,13 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
     testPoint[2] = point[5];
     points->InsertElement(i, testPoint);
   }
-  
+
   pointsLocator->SetPoints(points);
   pointsLocator->Initialize();
 
   std::vector<T> leastSquaresEstimateData;
   leastSquaresEstimateData.reserve(this->numVotesForBest);
-  
+
   if (this->numVotesForBest > 0)
   {
     for (unsigned int j = 0; j < numAgreeObjects; j++)
@@ -241,7 +240,7 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
         std::vector<size_t> ret_indexes(num_results);
         std::vector<double> out_dists_sqr(num_results);
         nanoflann::KNNResultSet<double> resultSet(num_results);
-        
+
         auto transformedPoint = transform->TransformPoint(testPoint);
         auto pointId = pointsLocator->FindClosestPoint(transformedPoint);
         auto corresPoint = points->GetElement(pointId);
@@ -297,7 +296,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
 
     unsigned int     numDataObjects = caller->data.size();
     unsigned int     numAgreeObjects = caller->agreeData.size();
-    
+
     unsigned int     numForEstimate = caller->paramEstimator->GetMinimalForEstimate();
     std::vector<T *> exactEstimateData;
     std::vector<SType>   exactEstimateParameters;
@@ -360,7 +359,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         // colinear points for a circle fit)
         if (exactEstimateParameters.size() == 0)
           continue;
-        
+
         // Inexpensive Test
         if (caller->checkCorresspondenceDistanceFlag == true)
         {
@@ -390,7 +389,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         double rmse_value = 0.0;
 
         for (m = 0; m < numAgreeObjects; m++)
-        { 
+        {
           if (result[m] > 0)
           {
             curVotes[m] = true;
@@ -398,7 +397,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
             rmse_value = rmse_value + result[m];
           }
         } // found a larger consensus set?
-        
+
         caller->resultsMutex.lock();
         if (numVotesForCur > caller->numVotesForBest || (numVotesForCur == caller->numVotesForBest && rmse_value < caller->bestRMSE))
         {
@@ -416,7 +415,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         caller->resultsMutex.unlock();
       }
       else
-      { 
+      {
         // this sub set already appeared, release memory
         delete[] curSubSetIndexes;
       }
