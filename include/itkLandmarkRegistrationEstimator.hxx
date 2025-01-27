@@ -55,7 +55,7 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::GetDelta()
 template <unsigned int Dimension, typename TTransform>
 void
 LandmarkRegistrationEstimator<Dimension, TTransform>::Estimate(std::vector<Point<double, Dimension> *> & data,
-                                                   std::vector<double> &                     parameters)
+                                                               std::vector<double> &                     parameters)
 {
   parameters.clear();
 
@@ -63,9 +63,8 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::Estimate(std::vector<Point
   using PixelType = float;
   using FixedImageType = itk::Image<PixelType, DimensionPoint>;
   using MovingImageType = itk::Image<PixelType, DimensionPoint>;
-  
-  using TransformInitializerType =
-    itk::LandmarkBasedTransformInitializer<TTransform, FixedImageType, MovingImageType>;
+
+  using TransformInitializerType = itk::LandmarkBasedTransformInitializer<TTransform, FixedImageType, MovingImageType>;
   auto initializer = TransformInitializerType::New();
   auto transform = TTransform::New();
 
@@ -115,7 +114,7 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::Estimate(std::vector<Point
 template <unsigned int Dimension, typename TTransform>
 void
 LandmarkRegistrationEstimator<Dimension, TTransform>::Estimate(std::vector<Point<double, Dimension>> & data,
-                                                   std::vector<double> &                   parameters)
+                                                               std::vector<double> &                   parameters)
 {
   std::vector<Point<double, Dimension> *> usedData;
   int                                     dataSize = data.size();
@@ -128,8 +127,9 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::Estimate(std::vector<Point
 
 template <unsigned int Dimension, typename TTransform>
 void
-LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(std::vector<Point<double, Dimension> *> & data,
-                                                               std::vector<double> &                     parameters)
+LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(
+  std::vector<Point<double, Dimension> *> & data,
+  std::vector<double> &                     parameters)
 {
   parameters.clear();
 
@@ -138,12 +138,11 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(std::
   using FixedImageType = itk::Image<PixelType, DimensionPoint>;
   using MovingImageType = itk::Image<PixelType, DimensionPoint>;
 
-  using TransformInitializerType =
-    itk::LandmarkBasedTransformInitializer<TTransform, FixedImageType, MovingImageType>;
-  
+  using TransformInitializerType = itk::LandmarkBasedTransformInitializer<TTransform, FixedImageType, MovingImageType>;
+
   auto initializer = TransformInitializerType::New();
   auto transform = TTransform::New();
-  
+
   itk::Point<double, 3>                                     point;
   typename TransformInitializerType::LandmarkPointContainer fixedLandmarks;
   typename TransformInitializerType::LandmarkPointContainer movingLandmarks;
@@ -187,7 +186,7 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(std::
 template <unsigned int Dimension, typename TTransform>
 void
 LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(std::vector<Point<double, Dimension>> & data,
-                                                               std::vector<double> &                   parameters)
+                                                                           std::vector<double> & parameters)
 {
   std::vector<Point<double, Dimension> *> usedData;
   int                                     dataSize = data.size();
@@ -201,14 +200,15 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::LeastSquaresEstimate(std::
 
 template <unsigned int Dimension, typename TTransform>
 bool
-LandmarkRegistrationEstimator<Dimension, TTransform>::Agree(std::vector<double> & parameters, Point<double, Dimension> & data)
+LandmarkRegistrationEstimator<Dimension, TTransform>::Agree(std::vector<double> &      parameters,
+                                                            Point<double, Dimension> & data)
 {
   auto transform = TTransform::New();
 
   auto optParameters = transform->GetParameters();
   auto fixedParameters = transform->GetFixedParameters();
 
-  int counter = 0;
+  int          counter = 0;
   unsigned int totalParameters = optParameters.GetSize() + fixedParameters.GetSize();
   for (unsigned int i = optParameters.GetSize(); i < totalParameters; ++i)
   {
@@ -248,10 +248,10 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::SetAgreeData(std::vector<P
 {
   this->agreePoints = PointsContainer::New();
   this->agreePoints->reserve(data.size());
-  
+
   this->samples.resize(data.size());
 
-  unsigned int dim = 3;
+  unsigned int          dim = 3;
   itk::Point<double, 3> testPoint;
 
   for (unsigned int i = 0; i < data.size(); ++i)
@@ -275,8 +275,10 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::SetAgreeData(std::vector<P
 
 template <unsigned int Dimension, typename TTransform>
 bool
-LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceEdgeLength(std::vector<double> & parameters,
-      std::vector<Point<double, Dimension> *> & data, double inputEdgeLength)
+LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceEdgeLength(
+  std::vector<double> &                     parameters,
+  std::vector<Point<double, Dimension> *> & data,
+  double                                    inputEdgeLength)
 {
   itk::Point<double, 3> p0_source;
   itk::Point<double, 3> p1_source;
@@ -286,28 +288,27 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceEdgeLe
 
   double similarity_threshold = inputEdgeLength;
 
-  unsigned int dataSize =  data.size();
-  for (unsigned int i=0; i < dataSize; ++i)
+  unsigned int dataSize = data.size();
+  for (unsigned int i = 0; i < dataSize; ++i)
   {
-    for (unsigned int j=i+1; j < dataSize; ++j)
+    for (unsigned int j = i + 1; j < dataSize; ++j)
     {
       Point<double, Dimension> & temp_point1 = *(data[i]);
       Point<double, Dimension> & temp_point2 = *(data[j]);
 
-      for (unsigned int k=0; k < 3; ++k)
+      for (unsigned int k = 0; k < 3; ++k)
       {
         p0_source[k] = temp_point1[k];
-        p0_dest[k] = temp_point1[k+3];
+        p0_dest[k] = temp_point1[k + 3];
 
         p1_source[k] = temp_point2[k];
-        p1_dest[k] = temp_point2[k+3];
+        p1_dest[k] = temp_point2[k + 3];
       }
 
       auto dis_source = p0_source.EuclideanDistanceTo(p1_source);
       auto dis_target = p0_dest.EuclideanDistanceTo(p1_dest);
 
-      if (dis_source < dis_target * similarity_threshold ||
-                dis_target < dis_source * similarity_threshold)
+      if (dis_source < dis_target * similarity_threshold || dis_target < dis_source * similarity_threshold)
       {
         return false;
       }
@@ -319,15 +320,16 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceEdgeLe
 
 template <unsigned int Dimension, typename TTransform>
 bool
-LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceDistance(std::vector<double> & parameters,
-      std::vector<Point<double, Dimension> *> & data)
+LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceDistance(
+  std::vector<double> &                     parameters,
+  std::vector<Point<double, Dimension> *> & data)
 {
   auto transform = TTransform::New();
 
   auto optParameters = transform->GetParameters();
   auto fixedParameters = transform->GetFixedParameters();
 
-  int counter = 0;
+  int          counter = 0;
   unsigned int totalParameters = optParameters.GetSize() + fixedParameters.GetSize();
   for (unsigned int i = optParameters.GetSize(); i < totalParameters; ++i)
   {
@@ -347,8 +349,8 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceDistan
   itk::Point<double, 3> p0;
   itk::Point<double, 3> p1;
 
-  unsigned int dataSize =  data.size();
-  for (unsigned int i=0; i < dataSize; ++i)
+  unsigned int dataSize = data.size();
+  for (unsigned int i = 0; i < dataSize; ++i)
   {
     Point<double, Dimension> & pnt = *(data[i]);
 
@@ -373,15 +375,16 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::CheckCorresspondenceDistan
 
 template <unsigned int Dimension, typename TTransform>
 std::vector<double>
-LandmarkRegistrationEstimator<Dimension, TTransform>::AgreeMultiple(std::vector<double> & parameters, 
-      std::vector<Point<double, Dimension>> & data, unsigned int currentBest)
+LandmarkRegistrationEstimator<Dimension, TTransform>::AgreeMultiple(std::vector<double> &                   parameters,
+                                                                    std::vector<Point<double, Dimension>> & data,
+                                                                    unsigned int                            currentBest)
 {
   auto transform = TTransform::New();
 
   auto optParameters = transform->GetParameters();
   auto fixedParameters = transform->GetFixedParameters();
 
-  int counter = 0;
+  int          counter = 0;
   unsigned int totalParameters = optParameters.GetSize() + fixedParameters.GetSize();
   for (unsigned int i = optParameters.GetSize(); i < totalParameters; ++i)
   {
@@ -400,19 +403,19 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::AgreeMultiple(std::vector<
 
   std::vector<double> query_pt(3);
   std::vector<double> output(data.size());
-  //output.reserve(data.size());
+  // output.reserve(data.size());
 
-  const size_t num_results = 1;
-  std::vector<size_t> ret_indexes(num_results);
-  std::vector<double> out_dists_sqr(num_results);
+  const size_t                    num_results = 1;
+  std::vector<size_t>             ret_indexes(num_results);
+  std::vector<double>             out_dists_sqr(num_results);
   nanoflann::KNNResultSet<double> resultSet(num_results);
 
   itk::Point<double, 3> p0;
 
   unsigned int localBest = 0;
-  unsigned int dataSize =  data.size();
+  unsigned int dataSize = data.size();
 
-  for (unsigned int i=0; i < dataSize; ++i)
+  for (unsigned int i = 0; i < dataSize; ++i)
   {
     // For early stopping. No point running if this condition is true
     if (localBest + dataSize - i < currentBest)
@@ -424,12 +427,12 @@ LandmarkRegistrationEstimator<Dimension, TTransform>::AgreeMultiple(std::vector<
     p0[2] = data[i][2];
 
     auto transformedPoint = transform->TransformPoint(p0);
-    
+
     query_pt[0] = transformedPoint[0];
     query_pt[1] = transformedPoint[1];
     query_pt[2] = transformedPoint[2];
-    
-    resultSet.init(&ret_indexes[0], &out_dists_sqr[0] );
+
+    resultSet.init(&ret_indexes[0], &out_dists_sqr[0]);
     this->mat_adaptor->index->findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10));
     bool flag = out_dists_sqr[0] < this->delta;
     if (flag)

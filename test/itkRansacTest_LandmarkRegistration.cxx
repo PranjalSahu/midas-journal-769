@@ -27,42 +27,42 @@
 
 template <unsigned int Dimension>
 void
-GenerateData(std::vector<itk::Point<double, Dimension>> & data, 
-    std::vector<itk::Point<double, Dimension>> & agreeData,
-    char * movingFeatureMesh, char * fixedFeatureMesh, char * movingMesh, 
-    char * fixedMesh);
+GenerateData(std::vector<itk::Point<double, Dimension>> & data,
+             std::vector<itk::Point<double, Dimension>> & agreeData,
+             char *                                       movingFeatureMesh,
+             char *                                       fixedFeatureMesh,
+             char *                                       movingMesh,
+             char *                                       fixedMesh);
 
 
 int
 itkRansacTest_LandmarkRegistration(int argc, char * argv[])
 {
-  if( argc < 5 )
-    {
-      std::cerr << "Missing arguments." << std::endl;
-      std::cerr << "Usage: " << std::endl;
-      std::cerr << argv[0]
-                << " movingFeatureMesh, "
-                << "fixedFeatureMesh, "
-                << "movingMesh, "
-                << "fixedMesh "
-                << std::endl;
+  if (argc < 5)
+  {
+    std::cerr << "Missing arguments." << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << " movingFeatureMesh, "
+              << "fixedFeatureMesh, "
+              << "movingMesh, "
+              << "fixedMesh " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   using TTransform = itk::Similarity3DTransform<double>;
-  const unsigned int DimensionPoint = 6;
+  const unsigned int                                                          DimensionPoint = 6;
   typedef itk::RANSAC<itk::Point<double, DimensionPoint>, double, TTransform> RANSACType;
 
   std::vector<itk::Point<double, DimensionPoint>> data;
   std::vector<itk::Point<double, DimensionPoint>> agreeData;
-  std::vector<double>                transformParameters;
+  std::vector<double>                             transformParameters;
 
   GenerateData<DimensionPoint>(data, agreeData, argv[1], argv[2], argv[3], argv[4]);
-  
+
   // create and initialize the parameter estimator
   double inlierValue = 3;
-  int ransacPoints = 3;
-  int maxIteration = 10000;
+  int    ransacPoints = 3;
+  int    maxIteration = 10000;
   auto   registrationEstimator = itk::LandmarkRegistrationEstimator<6, TTransform>::New();
   registrationEstimator->SetMinimalForEstimate(ransacPoints);
   registrationEstimator->SetDelta(inlierValue);
@@ -84,7 +84,7 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
   ransacEstimator->SetCheckCorresspondenceDistance(true);
   ransacEstimator->SetCheckCorrespondenceEdgeLength(0.9);
   ransacEstimator->SetMaxIteration(maxIteration);
-  
+
   auto percentageOfDataUsed = ransacEstimator->Compute(transformParameters, desiredProbabilityForNoOutliers);
 
   if (transformParameters.empty())
@@ -109,10 +109,12 @@ itkRansacTest_LandmarkRegistration(int argc, char * argv[])
 
 template <unsigned int Dimension>
 void
-GenerateData(std::vector<itk::Point<double, Dimension>> & data, 
-std::vector<itk::Point<double, Dimension>> & agreeData,
-char * movingFeatureMesh, char * fixedFeatureMesh, char * movingMesh, 
-char * fixedMesh)
+GenerateData(std::vector<itk::Point<double, Dimension>> & data,
+             std::vector<itk::Point<double, Dimension>> & agreeData,
+             char *                                       movingFeatureMesh,
+             char *                                       fixedFeatureMesh,
+             char *                                       movingMesh,
+             char *                                       fixedMesh)
 {
   // Read the two point sets that are the putative matches
   using CoordinateType = double;
@@ -162,8 +164,8 @@ char * fixedMesh)
   }
 
   std::vector<unsigned int> indexArray;
-  unsigned int minCount = std::min(mesh1->GetNumberOfPoints(), mesh2->GetNumberOfPoints());
-  unsigned int maxCount = std::max(mesh1->GetNumberOfPoints(), mesh2->GetNumberOfPoints());
+  unsigned int              minCount = std::min(mesh1->GetNumberOfPoints(), mesh2->GetNumberOfPoints());
+  unsigned int              maxCount = std::max(mesh1->GetNumberOfPoints(), mesh2->GetNumberOfPoints());
   indexArray.reserve(maxCount);
 
   // shuffle the larger pointset to sample points uniformly from pointset

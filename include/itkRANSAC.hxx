@@ -27,19 +27,19 @@ namespace itk
 {
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 RANSAC<T, SType, TTransform>::RANSAC()
 {
   this->numberOfThreads = 1;
 }
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 RANSAC<T, SType, TTransform>::~RANSAC()
 {}
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetNumberOfThreads(unsigned int inputNumberOfThreads)
 {
@@ -49,35 +49,35 @@ RANSAC<T, SType, TTransform>::SetNumberOfThreads(unsigned int inputNumberOfThrea
   this->numberOfThreads = inputNumberOfThreads; // numberOfThreads;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetMaxIteration(unsigned int inputMaxIteration)
 {
   this->maxIteration = inputMaxIteration;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetCheckCorresspondenceDistance(bool inputFlag)
 {
   this->checkCorresspondenceDistanceFlag = inputFlag;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 bool
 RANSAC<T, SType, TTransform>::GetCheckCorresspondenceDistance()
 {
   return this->checkCorresspondenceDistanceFlag;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetCheckCorrespondenceEdgeLength(double inputLength)
 {
   this->checkCorrespondenceEdgeLengthTest = inputLength;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 double
 RANSAC<T, SType, TTransform>::GetCheckCorrespondenceEdgeLength()
 {
@@ -85,14 +85,14 @@ RANSAC<T, SType, TTransform>::GetCheckCorrespondenceEdgeLength()
 }
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 unsigned int
 RANSAC<T, SType, TTransform>::GetNumberOfThreads()
 {
   return this->numberOfThreads;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetParametersEstimator(ParametersEstimatorType * inputParamEstimator)
 {
@@ -106,7 +106,7 @@ RANSAC<T, SType, TTransform>::SetParametersEstimator(ParametersEstimatorType * i
 }
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetData(std::vector<T> & inputData)
 {
@@ -119,7 +119,7 @@ RANSAC<T, SType, TTransform>::SetData(std::vector<T> & inputData)
   this->data = inputData;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 void
 RANSAC<T, SType, TTransform>::SetAgreeData(std::vector<T> & inputData)
 {
@@ -132,7 +132,7 @@ RANSAC<T, SType, TTransform>::SetAgreeData(std::vector<T> & inputData)
   this->agreeData = inputData;
 }
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 std::vector<double>
 RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double desiredProbabilityForNoOutliers)
 {
@@ -144,11 +144,11 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
   // or desiredProbabilityForNoOutliers is not in (0.0,1.0)
   if (this->paramEstimator.IsNull() || this->data.empty() || desiredProbabilityForNoOutliers >= 1.0 ||
       desiredProbabilityForNoOutliers <= 0.0)
-      {
-        outputPair.push_back(0);
-        outputPair.push_back(0);
-        return outputPair;
-      }
+  {
+    outputPair.push_back(0);
+    outputPair.push_back(0);
+    return outputPair;
+  }
 
 
   unsigned int numForEstimate = this->paramEstimator->GetMinimalForEstimate();
@@ -165,7 +165,7 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
   // initialize with the number of all possible subsets
   this->allTries = Choose(numDataObjects, numForEstimate);
   this->numTries = this->allTries;
-  //this->
+  // this->
   this->numerator = log(1.0 - desiredProbabilityForNoOutliers);
 
   srand((unsigned)time(NULL)); // seed random number generator
@@ -178,8 +178,8 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
 
   auto transform = TTransform::New();
 
-  auto optParameters = transform->GetParameters();
-  auto fixedParameters = transform->GetFixedParameters();
+  auto         optParameters = transform->GetParameters();
+  auto         fixedParameters = transform->GetFixedParameters();
   unsigned int totalParameters = optParameters.GetSize() + fixedParameters.GetSize();
 
   int counter = 0;
@@ -204,11 +204,11 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
   auto pointsLocator = PointsLocatorType::New();
 
   using PointsContainer = itk::VectorContainer<IdentifierType, itk::Point<double, 3>>;
-  auto points = PointsContainer::New();
+  auto                  points = PointsContainer::New();
   itk::Point<double, 3> testPoint;
   itk::Point<double, 6> inlierPoint;
 
-  points->Reserve( this->agreeData.size());
+  points->Reserve(this->agreeData.size());
   for (unsigned int i = 0; i < this->agreeData.size(); ++i)
   {
     auto point = this->agreeData[i];
@@ -236,9 +236,9 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
         testPoint[1] = tempPoint[1];
         testPoint[2] = tempPoint[2];
 
-        const size_t num_results = 1;
-        std::vector<size_t> ret_indexes(num_results);
-        std::vector<double> out_dists_sqr(num_results);
+        const size_t                    num_results = 1;
+        std::vector<size_t>             ret_indexes(num_results);
+        std::vector<double>             out_dists_sqr(num_results);
         nanoflann::KNNResultSet<double> resultSet(num_results);
 
         auto transformedPoint = transform->TransformPoint(testPoint);
@@ -266,7 +266,7 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
   typename std::set<int *, SubSetIndexComparator>::iterator chosenSubSetsEnd = this->chosenSubSets->end();
   while (it != chosenSubSetsEnd)
   {
-    delete[](*it);
+    delete[] (*it);
     it++;
   }
   this->chosenSubSets->clear();
@@ -279,7 +279,7 @@ RANSAC<T, SType, TTransform>::Compute(std::vector<SType> & parameters, double de
 }
 
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 ITK_THREAD_RETURN_TYPE
 RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
 {
@@ -294,12 +294,12 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
     int          j;
     int *        curSubSetIndexes;
 
-    unsigned int     numDataObjects = caller->data.size();
-    unsigned int     numAgreeObjects = caller->agreeData.size();
+    unsigned int numDataObjects = caller->data.size();
+    unsigned int numAgreeObjects = caller->agreeData.size();
 
-    unsigned int     numForEstimate = caller->paramEstimator->GetMinimalForEstimate();
-    std::vector<T *> exactEstimateData;
-    std::vector<SType>   exactEstimateParameters;
+    unsigned int       numForEstimate = caller->paramEstimator->GetMinimalForEstimate();
+    std::vector<T *>   exactEstimateData;
+    std::vector<SType> exactEstimateParameters;
 
     // true if agreeData[i] agrees with the current model, otherwise false
     bool * curVotes = new bool[numAgreeObjects];
@@ -348,7 +348,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
       caller->hypothesisMutex.lock();
       // check that the sub-set just chosen is unique
       std::pair<typename std::set<int *, SubSetIndexComparator>::iterator, bool> res =
-         caller->chosenSubSets->insert(curSubSetIndexes);
+        caller->chosenSubSets->insert(curSubSetIndexes);
       caller->hypothesisMutex.unlock();
 
       if (res.second == true)
@@ -363,7 +363,8 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         // Inexpensive Test
         if (caller->checkCorresspondenceDistanceFlag == true)
         {
-          auto distanceFlag = caller->paramEstimator->CheckCorresspondenceDistance(exactEstimateParameters, exactEstimateData);
+          auto distanceFlag =
+            caller->paramEstimator->CheckCorresspondenceDistance(exactEstimateParameters, exactEstimateData);
           if (distanceFlag == false)
           {
             continue;
@@ -373,7 +374,8 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         // Inexpensive Test
         if (caller->checkCorrespondenceEdgeLengthTest > 0)
         {
-          auto edgeFlag = caller->paramEstimator->CheckCorresspondenceEdgeLength(exactEstimateParameters, exactEstimateData, caller->checkCorrespondenceEdgeLengthTest);
+          auto edgeFlag = caller->paramEstimator->CheckCorresspondenceEdgeLength(
+            exactEstimateParameters, exactEstimateData, caller->checkCorrespondenceEdgeLengthTest);
           if (edgeFlag == false)
           {
             continue;
@@ -385,7 +387,8 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         std::fill(curVotes, curVotes + numAgreeObjects, false);
 
         // Expensive Inlier Test
-        auto result = caller->paramEstimator->AgreeMultiple(exactEstimateParameters, caller->agreeData, caller->numVotesForBest);
+        auto result =
+          caller->paramEstimator->AgreeMultiple(exactEstimateParameters, caller->agreeData, caller->numVotesForBest);
         double rmse_value = 0.0;
 
         for (m = 0; m < numAgreeObjects; m++)
@@ -399,7 +402,8 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
         } // found a larger consensus set?
 
         caller->resultsMutex.lock();
-        if (numVotesForCur > caller->numVotesForBest || (numVotesForCur == caller->numVotesForBest && rmse_value < caller->bestRMSE))
+        if (numVotesForCur > caller->numVotesForBest ||
+            (numVotesForCur == caller->numVotesForBest && rmse_value < caller->bestRMSE))
         {
           caller->numVotesForBest = numVotesForCur;
           caller->bestRMSE = rmse_value;
@@ -407,7 +411,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
           std::copy(curVotes, curVotes + numAgreeObjects, caller->bestVotes);
 
           caller->parametersRansac.clear();
-          for (unsigned int kp=0; kp < exactEstimateParameters.size(); ++kp)
+          for (unsigned int kp = 0; kp < exactEstimateParameters.size(); ++kp)
           {
             caller->parametersRansac.push_back(exactEstimateParameters[kp]);
           }
@@ -428,7 +432,7 @@ RANSAC<T, SType, TTransform>::RANSACThreadCallback(void * arg)
 
 /*****************************************************************************/
 
-template <typename T,  typename SType, typename TTransform>
+template <typename T, typename SType, typename TTransform>
 unsigned int
 RANSAC<T, SType, TTransform>::Choose(unsigned int n, unsigned int m)
 {
@@ -458,9 +462,9 @@ RANSAC<T, SType, TTransform>::Choose(unsigned int n, unsigned int m)
   // check for overflow both in computation and in result
   if (denominatorLocal > std::numeric_limits<double>::max() || numeratorLocal > std::numeric_limits<double>::max() ||
       static_cast<double>(std::numeric_limits<unsigned int>::max()) < resultLocal)
-      {
-        return std::numeric_limits<unsigned int>::max();
-      }
+  {
+    return std::numeric_limits<unsigned int>::max();
+  }
   else
     return static_cast<unsigned int>(resultLocal);
 }

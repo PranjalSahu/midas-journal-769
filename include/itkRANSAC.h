@@ -90,14 +90,16 @@ public:
   /** New method for creating an object using a factory. */
   itkNewMacro(Self);
 
-    /**
-     * Set/Get the number of threads used by the RANSAC implementation.
-     *
-     * @param numberOfThreads Number of threads the algorithm uses. Valid values
-     *                        are in [1, #cores].
-     */
-    void SetNumberOfThreads(unsigned int numberOfThreads);
-    void SetMaxIteration(unsigned int maxIteration);
+  /**
+   * Set/Get the number of threads used by the RANSAC implementation.
+   *
+   * @param numberOfThreads Number of threads the algorithm uses. Valid values
+   *                        are in [1, #cores].
+   */
+  void
+  SetNumberOfThreads(unsigned int numberOfThreads);
+  void
+  SetMaxIteration(unsigned int maxIteration);
   unsigned int
   GetNumberOfThreads();
 
@@ -158,7 +160,7 @@ public:
   double
   GetCheckCorrespondenceEdgeLength();
 
-  bool checkCorresspondenceDistanceFlag = false;
+  bool   checkCorresspondenceDistanceFlag = false;
   double checkCorrespondenceEdgeLengthTest = 0;
 
 
@@ -221,8 +223,8 @@ private:
   unsigned int numVotesForBest;
   double       bestRMSE;
 
-  std::vector<T> data;
-  std::vector<T> agreeData;
+  std::vector<T>      data;
+  std::vector<T>      agreeData;
   std::vector<double> parametersRansac;
 
   // set which holds all of the subgroups/hypotheses already selected
@@ -234,8 +236,8 @@ private:
   unsigned int allTries;
 
   typename ParametersEstimator<T, SType>::Pointer paramEstimator;
-  std::mutex                                  hypothesisMutex;
-  std::mutex                                  resultsMutex;
+  std::mutex                                      hypothesisMutex;
+  std::mutex                                      resultsMutex;
 };
 
 } // end namespace itk
